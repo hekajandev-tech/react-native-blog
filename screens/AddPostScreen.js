@@ -1,11 +1,57 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert } from "react-native";
 import { COLORS } from "../utils/colors";
+import { useState } from "react";
+import { apiClient } from "../utils/api";
 
 export default function AddPostScreen() {
+  
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+
+
+  async function handleSubmit(){
+    try{
+     const response = await apiClient.post("/posts",{title,content});
+     
+     //testing(will be shown in command prompt)
+     console.log("Post created: ", response.data);
+
+     //clear the text
+     setTitle("");
+     setContent("");
+     Alert.alert("Success", "Post Added successfully")
+  } catch(error) {
+    Alert.alert("Error","Failed to submit the post")
+  }
+}
+
+
   return (
     <View style={styles.container}>
       <Text style={styles.heading}>Add Post</Text>
-      <Text style={styles.body}>Create a new blog post here.</Text>
+
+      {/* This is for Title */}
+      <TextInput
+      style={styles.input}
+      placeholder="Title"
+      value={title}
+      onChangeText={setTitle}
+      />
+
+      {/* This is for Content */}
+      <TextInput
+      style={styles.input}
+      placeholder="Content"
+      value={content}
+      onChangeText={setContent}
+      />
+
+      {/* This is the submit button */}
+      <TouchableOpacity
+      style={styles.button}
+      onPress={handleSubmit}>
+        <Text style={styles.buttonText}>Submit</Text>
+      </TouchableOpacity>
     </View>
   );
 }
